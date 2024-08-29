@@ -1,0 +1,17 @@
+# Ignore everything
+*
+# Whitelist anything that's a directory
+!*/
+
+!.gitignore
+
+# config files
+!.editorconfig
+
+# golang specific
+!go.mod
+!go.sum
+
+# source files
+!*.go
+!cmd/server/index.html

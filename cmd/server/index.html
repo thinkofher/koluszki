@@ -1,0 +1,70 @@
+{{ define "index" }}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Koluszki</title>
+    <script src="https://unpkg.com/htmx.org@2.0.2"></script>
+    <script src="https://unpkg.com/alpinejs@3.14.1/dist/cdn.min.js" defer></script>
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+  </head>
+  <body class="bg-white dark:bg-gray-900">
+
+    <nav class="border-gray-200 bg-gray-50 dark:border-gray-700 dark:bg-gray-800">
+      <div class="mx-auto flex max-w-screen-xl flex-wrap items-center justify-between p-4">
+        <a href="#" class="flex items-center space-x-3 rtl:space-x-reverse">
+          <span class="self-center whitespace-nowrap text-2xl font-semibold dark:text-white">Koluszki</span>
+        </a>
+      </div>
+    </nav>
+
+    <section class="bg-white dark:bg-gray-900">
+      <div class="mx-auto max-w-screen-xl p-4">
+
+        <div class="space-y-4 md:space-y-0 md:space-x-4 flex flex-col md:flex-row md:h-[calc(100vh-100px)]">
+          <form class="flex flex-col md:w-1/2 rounded-lg border border-gray-200 bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-800">
+            <label for="message" class="mb-2 text-3xl font-extrabold text-gray-900 dark:text-white">HTML to be translated</label>
+            <textarea id="message" rows="4" class="block w-full h-full resize-none rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500" placeholder="Paste your HTML here..."></textarea>
+          </form>
+
+          <div class="flex flex-col md:w-1/2 rounded-lg border border-gray-200 bg-gray-50 p-4 md:min-h-0 dark:border-gray-700 dark:bg-gray-800">
+            <h2 class="mb-2 text-3xl font-extrabold text-gray-900 dark:text-white">Output</h2>
+            <div class="w-full overflow-scroll">
+              <div class="relative bg-gray-50 rounded-lg dark:bg-gray-700 p-4">
+
+                <div class="overflow-scroll max-h-full">
+                  <pre><code id="code-block" class="text-sm text-gray-500 dark:text-gray-400 whitespace-pre">g.Text(`There will be golang here...`)</code></pre>
+                </div>
+
+                <div class="absolute top-2 end-2 bg-gray-50 dark:bg-gray-700"
+                     x-data="{ success: false }">
+                  <button class="text-gray-900 dark:text-gray-400 m-0.5 hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-600 dark:hover:bg-gray-700 rounded-lg py-2 px-2.5 inline-flex items-center justify-center bg-white border-gray-200 border">
+
+                    <span x-show="!success" id="default-message" class="inline-flex items-center">
+                      <svg class="w-3 h-3 me-1.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 18 20">
+                        <path d="M16 1h-3.278A1.992 1.992 0 0 0 11 0H7a1.993 1.993 0 0 0-1.722 1H2a2 2 0 0 0-2 2v15a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2Zm-3 14H5a1 1 0 0 1 0-2h8a1 1 0 0 1 0 2Zm0-4H5a1 1 0 0 1 0-2h8a1 1 0 1 1 0 2Zm0-5H5a1 1 0 0 1 0-2h2V2h4v2h2a1 1 0 1 1 0 2Z"></path>
+                      </svg>
+                      <span class="text-xs font-semibold">Copy code</span>
+                    </span>
+
+                    <span x-show="success" id="success-message" class="inline-flex items-center">
+                      <svg class="w-3 h-3 text-blue-700 dark:text-blue-500 me-1.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 12">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5.917 5.724 10.5 15 1.5"></path>
+                      </svg>
+                      <span class="text-xs font-semibold text-blue-700 dark:text-blue-500">Copied</span>   
+                    </span>
+
+                  </button>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+  </body>
+</html>
+{{ index }}
