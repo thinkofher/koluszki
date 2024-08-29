@@ -1,3 +1,6 @@
+// Package koluszki implements Renderer to render
+// github.com/maragudk/gomponents Go code based on html.Node. It also provides
+// CLI and HTTP server for your convenience.
 package koluszki
 
 import (
