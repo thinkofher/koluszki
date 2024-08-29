@@ -9,9 +9,10 @@ import (
 func Render(w io.Writer, n *html.Node) error {
 	r := NewRenderer(
 		WithGomponentsAlias("g"),
-		WithHTMLPackageElements("g", "h"),
-		WithHTMLPackageAttributes("g", "h"),
+		WithHTMLPackageElements("g", ""),
+		WithHTMLPackageAttributes("g", ""),
 		WithRenderSVG,
 	)
+
 	return r.Render(w, n)
 }

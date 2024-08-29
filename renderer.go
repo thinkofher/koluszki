@@ -122,7 +122,12 @@ func WithHTMLPackageElements(gomponentsAlias, htmlAlias string) Option {
 				}
 			}
 
-			_, err := fmt.Fprintf(w, "%s%s.%s(", prefx, htmlAlias, f)
+			pkgName := ""
+			if htmlAlias != "" {
+				pkgName = fmt.Sprintf("%s.", htmlAlias)
+			}
+
+			_, err := fmt.Fprintf(w, "%s%s%s(", prefx, pkgName, f)
 			if err != nil {
 				return fmt.Errorf("html func tag %s: %w", f, err)
 			}
@@ -147,26 +152,31 @@ func WithHTMLPackageAttributes(gomponentsAlias, htmlAlias string) Option {
 			onlyAttr, isOnlyAttr := attrsWithoutValue[k]
 			withValue, isWithValue := attrsWithValue[k]
 
+			pkgName := ""
+			if htmlAlias != "" {
+				pkgName = fmt.Sprintf("%s.", htmlAlias)
+			}
+
 			switch {
 			case isOnlyAttr:
-				_, err := fmt.Fprintf(w, "%s%s.%s(),", prefx, htmlAlias, onlyAttr)
+				_, err := fmt.Fprintf(w, "%s%s%s(),", prefx, pkgName, onlyAttr)
 				if err != nil {
 					return fmt.Errorf("attr from html package (%s): %w", a.Key, err)
 				}
 			case isWithValue:
-				_, err := fmt.Fprintf(w, "%s%s.%s(\"%s\"),", prefx, htmlAlias, withValue, a.Val)
+				_, err := fmt.Fprintf(w, "%s%s%s(\"%s\"),", prefx, pkgName, withValue, a.Val)
 				if err != nil {
 					return fmt.Errorf("attr from html package (%s): %w", a.Key, err)
 				}
 			case strings.HasPrefix(k, "data-"):
 				k = strings.TrimPrefix(k, "data-")
-				_, err := fmt.Fprintf(w, "%s%s.Data(\"%s\", \"%s\"),", prefx, htmlAlias, k, a.Val)
+				_, err := fmt.Fprintf(w, "%s%sData(\"%s\", \"%s\"),", prefx, pkgName, k, a.Val)
 				if err != nil {
 					return fmt.Errorf("attr from html package (%s): %w", a.Key, err)
 				}
 			case strings.HasPrefix(k, "aria-"):
 				k = strings.TrimPrefix(k, "aria-")
-				_, err := fmt.Fprintf(w, "%s%s.Aria(\"%s\", \"%s\"),", prefx, htmlAlias, k, a.Val)
+				_, err := fmt.Fprintf(w, "%s%sAria(\"%s\", \"%s\"),", prefx, pkgName, k, a.Val)
 				if err != nil {
 					return fmt.Errorf("attr from html package (%s): %w", a.Key, err)
 				}
