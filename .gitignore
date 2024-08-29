@@ -15,6 +15,7 @@
 # source files
 !*.go
 !cmd/server/index.html
+!cmd/server/deps/*
 
 !LICENSE
 !README.md

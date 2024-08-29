@@ -1,7 +1,7 @@
 package main
 
 import (
-	_ "embed"
+	"embed"
 	"flag"
 	"fmt"
 	"html/template"
@@ -19,6 +19,9 @@ import (
 
 //go:embed index.html
 var index string
+
+//go:embed deps
+var deps embed.FS
 
 var (
 	tmplIndex *template.Template
@@ -157,6 +160,8 @@ func run() error {
 
 	mux.Handle("GET /{$}", indexHandler())
 	mux.Handle("POST /code", codeHandler())
+
+	mux.Handle("GET /deps/", http.FileServerFS(deps))
 
 	addr := net.JoinHostPort(host, strconv.Itoa(port))
 
