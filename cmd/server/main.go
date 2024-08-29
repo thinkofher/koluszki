@@ -2,10 +2,13 @@ package main
 
 import (
 	_ "embed"
+	"flag"
 	"fmt"
 	"html/template"
+	"net"
 	"net/http"
 	"os"
+	"strconv"
 	"strings"
 	"sync"
 
@@ -141,13 +144,24 @@ func codeHandler() http.Handler {
 }
 
 func run() error {
+	var (
+		host string
+		port int
+	)
+
+	flag.StringVar(&host, "host", "127.0.0.1", "listen host address")
+	flag.IntVar(&port, "port", 21037, "listen port")
+	flag.Parse()
+
 	mux := http.NewServeMux()
 
 	mux.Handle("GET /{$}", indexHandler())
 	mux.Handle("POST /code", codeHandler())
 
-	fmt.Println("Listening at 127.0.0.1:21037...")
-	return http.ListenAndServe("127.0.0.1:21037", mux)
+	addr := net.JoinHostPort(host, strconv.Itoa(port))
+
+	fmt.Printf("Listening at %s...", addr)
+	return http.ListenAndServe(addr, mux)
 }
 
 func main() {
