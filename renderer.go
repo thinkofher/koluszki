@@ -8,6 +8,10 @@ import (
 	"golang.org/x/net/html"
 )
 
+// Renderer renders github.com/maragudk/gomponents go code.
+//
+// Use [NewRenderer] to initialize [Renderer]. Using default value of Renderer
+// can end up with panic.
 type Renderer struct {
 	renderSVG         bool
 	attrWrite         func(w io.Writer, level int, attr html.Attribute) error
@@ -15,6 +19,8 @@ type Renderer struct {
 	gomponentsPkgName string
 }
 
+// NewRenderer returns new Renderer. It is the only way to create new intance
+// of [Renderer].
 func NewRenderer(opts ...Option) *Renderer {
 	r := &Renderer{
 		renderSVG:         false,
@@ -36,6 +42,7 @@ func NewRenderer(opts ...Option) *Renderer {
 	return r
 }
 
+// Render renders given html.Node into provided writer.
 func (r *Renderer) Render(w io.Writer, n *html.Node) error {
 	return r.render(w, n, 0)
 }
@@ -97,14 +104,26 @@ func (r *Renderer) render(w io.Writer, n *html.Node, level int) error {
 	return nil
 }
 
+// Option modifies Renderer. You cannot define your own options.
 type Option func(*Renderer)
 
+// WithGomponentsAlias tells [Renderer] to use alias for every function call
+// from gomponents package in rendered code.
 func WithGomponentsAlias(alias string) Option {
 	return func(r *Renderer) {
 		r.gomponentsPkgName = alias
 	}
 }
 
+// WithHTMLPackageElements tells [Renderer] to use gomponents/html package in
+// order to render standard HTML elements. It uses default gomponent package as
+// fallback.
+//
+// In order to have proper go code rendered, you have to provide
+// gomponentsAlias, but you can leave htmlAlias empty.
+//
+// Empty htmlAlias will render function calls imported into namespace with "."
+// import operator.
 func WithHTMLPackageElements(gomponentsAlias, htmlAlias string) Option {
 	fallback := rawElementsWriter(gomponentsAlias)
 
@@ -137,6 +156,15 @@ func WithHTMLPackageElements(gomponentsAlias, htmlAlias string) Option {
 	}
 }
 
+// WithHTMLPackageElements tells [Renderer] to use gomponents/html package in
+// order to render standard HTML attributes. It uses default gomponent package
+// as fallback.
+//
+// In order to have proper go code rendered, you have to provide
+// gomponentsAlias, but you can leave htmlAlias empty.
+//
+// Empty htmlAlias will render function calls imported into namespace with "."
+// import operator.
 func WithHTMLPackageAttributes(gomponentsAlias, htmlAlias string) Option {
 	fallback := rawAttributesWriter(gomponentsAlias)
 	return func(r *Renderer) {
@@ -189,6 +217,13 @@ func WithHTMLPackageAttributes(gomponentsAlias, htmlAlias string) Option {
 	}
 }
 
+// WithRenderSVG tells [Renderer] to fully render SVG elements with gomponents
+// package.
+//
+// You can mix this option with [WithHTMLPackageElements] or
+// [WithHTMLPackageAttributes] just fine.
+//
+// By default, [Renderer] will use g.Raw function call to render SVGs.
 func WithRenderSVG(r *Renderer) {
 	r.renderSVG = true
 }
@@ -404,13 +439,3 @@ var attrsWithValue = map[string]string{
 	"enctype":      "EncType",
 	"dir":          "Dir",
 }
-
-// Aria attributes automatically have their name prefixed with "aria-".
-// func Aria(name, v string) g.Node {
-// 	return g.Attr("aria-"+name, v)
-// }
-
-// Data attributes automatically have their name prefixed with "data-".
-// func Data(name, v string) g.Node {
-// 	return g.Attr("data-"+name, v)
-// }
