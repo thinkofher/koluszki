@@ -57,6 +57,34 @@ func indexHandler() http.Handler {
 }
 
 func codeHandler() http.Handler {
+	type rendererPropersties struct {
+		renderSVG       bool
+		useHTMLPackage  bool
+		htmlAlias       string
+		gomponentsAlias string
+	}
+
+	renderer := func(props rendererPropersties) *koluszki.Renderer {
+		opts := []koluszki.Option{}
+
+		if props.gomponentsAlias != "" {
+			opts = append(opts, koluszki.WithGomponentsAlias(props.gomponentsAlias))
+		}
+
+		if props.useHTMLPackage {
+			opts = append(opts,
+				koluszki.WithHTMLPackageAttributes(props.gomponentsAlias, props.htmlAlias),
+				koluszki.WithHTMLPackageElements(props.gomponentsAlias, props.htmlAlias),
+			)
+		}
+
+		if props.renderSVG {
+			opts = append(opts, koluszki.WithRenderSVG)
+		}
+
+		return koluszki.NewRenderer(opts...)
+	}
+
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		tmpl, err := indexTemplate()
 		if err != nil {
@@ -88,13 +116,23 @@ func codeHandler() http.Handler {
 			return
 		}
 
+		rr := renderer(rendererPropersties{
+			renderSVG:       r.Form.Get("svg") != "",
+			useHTMLPackage:  r.Form.Get("html-enabled") != "",
+			htmlAlias:       r.Form.Get("html-pkg"),
+			gomponentsAlias: r.Form.Get("gomponents"),
+		})
+
 		var buff strings.Builder
-		if err := koluszki.Render(&buff, nodes.FirstChild); err != nil {
+		if err := rr.Render(&buff, nodes.FirstChild); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
-		props.Code = buff.String()
+		// I am sorry, but I'm just lazy. For some reason there is newline rendered
+		// on the first line. Let's just trim it and call it a day.
+		props.Code = strings.TrimLeft(buff.String(), "\n")
+
 		if err := tmpl.ExecuteTemplate(w, "code", &props); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
